@@ -49,8 +49,7 @@ User.findOne({username})
 @access - PUBLIC
 */
 router.post('/loginUser',(req,res)=>{
-const username=req.body.username.toUpperCase().trim(),password=req.body.password.toUpperCase().trim(),
-domain=req.body.domain.toUpperCase();
+const username=req.body.username.toUpperCase().trim(),password=req.body.password.toUpperCase().trim();
 User.findOne({username})
     .then(user=>{
     if(!user)return res.status(200).json({"notRegistered":"User is not registered"});
@@ -78,6 +77,17 @@ User.findOne({username})
     .catch(err=>console.log(err));
 });
 
+
+/*
+@type - GET
+@route - /api/auth/testUser
+@desc - a route to test login of the user
+@access - PRIVATE
+*/
+router.get('/testUser',passport.authenticate('jwt',{session:false}),
+(req,res)=>{
+    return res.status(200).json({"loginSuccess":"Login is successful"});
+});
 
 
 
