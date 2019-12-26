@@ -39,7 +39,9 @@ app.use(passport.initialize());
 
 
 // importing the strategy
+// require('./strategies/jwtStrategyAdmin')(passport);
 require('./strategies/jsonwtStrategy')(passport);
+require('./strategies/jwtStrategyAdmin')(passport);
 
 
 // declaring the port
