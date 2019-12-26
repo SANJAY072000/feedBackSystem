@@ -11,12 +11,8 @@ cors=require("cors");
 const app=express();
 
 
-// importing the database schemas
-
-
-
 // importing the routes
-
+const auth=require('./routes/api/auth');
 
 
 // importing the database connection string
@@ -47,7 +43,7 @@ const port=process.env.PORT || 3000;
 
 
 // configuring the routes
-
+app.use('/api/auth',auth);
 
 
 // deployment related stuff
