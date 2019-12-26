@@ -8,7 +8,8 @@ passport=require('passport');
 // importing the schemas
 const User=require('../../models/User'),
 Admin=require('../../models/Admin'),
-Service=require('../../models/Service');
+Service=require('../../models/Service'),
+Quest=require('../../models/Quest');
 
 
 /*
@@ -107,8 +108,88 @@ Admin.findOne({_id:service.admid})
      .catch(err=>console.log(err));
 })
 .catch(err=>console.log(err));
-
 });
+
+
+/*
+@type - GET
+@route - /api/admin/allQuests-:sqid
+@desc - a route to get all the questions of a service
+@access - PRIVATE
+*/
+router.get('/allQuests-:sqid',passport.authenticate('jwt',{session:false}),
+(req,res)=>{
+Quest.find({sevid:req.params.sqid})
+     .then(quest=>{
+     if(!quest.length)return res.status(200).json({"noQuestions":"No questions found"});
+     return res.status(200).json(quest);
+     })
+     .catch(err=>console.log(err));
+});
+
+
+/*
+@type - POST
+@route - /api/admin/addQuest-:sqid
+@desc - a route to add the questions in a service
+@access - PRIVATE
+*/
+router.post('/addQuest-:sqid',passport.authenticate('jwt',{session:false}),
+(req,res)=>{
+const newQuest={};
+newQuest.sevid=req.params.sqid;
+newQuest.questName=req.body.questName.toUpperCase();
+new Quest(newQuest).save()
+.then(quest=>res.status(200).json(quest))
+.catch(err=>console.log(err));
+});
+
+
+/*
+@type - DELETE
+@route - /api/admin/delQuest-:qid
+@desc - a route to delete the questions in a service
+@access - PRIVATE
+*/
+router.delete('/delQuest-:qid',passport.authenticate('jwt',{session:false}
+),(req,res)=>{
+Quest.findOneAndRemove({_id:req.params.qid})
+.then(()=>res.status(200).json({"questionRemoved":"Removed Successfully"}))
+.catch(err=>console.log(err));
+});
+
+
+/*
+@type - GET
+@route - /api/admin/
+@desc - a route to get all the services for a non-master admin
+@access - PRIVATE
+*/
+router.get('/',passport.authenticate('jwt',{session:false}),(req,res)=>{
+Service.find({admid:req.user._id})
+.then(serv=>res.status(200).json(serv))
+.catch(err=>console.log(err));
+});
+
+
+/*
+@type - GET
+@route - /api/admin/nmService-:sid
+@desc - a route to get the ratings for a non-master admin
+@access - PRIVATE
+*/
+router.get('/',passport.authenticate('jwt',{session:false}),(req,res)=>{
+    Service.findOne({_id:req.params.sid})
+    .then(service=>{
+    Quest.find({sevid:req.params.sid})
+    .then(quest=>res.status(200).json({
+    savr:service.avgRating,
+    quest:quest
+    }))
+    .catch(err=>console.log(err));
+    })
+    .catch(err=>console.log(err));
+    });
 
 
 
