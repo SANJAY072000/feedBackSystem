@@ -11,6 +11,10 @@ passport=require('passport');
 const User=require('../../models/User');
 
 
+// importing the configuration key
+const key=require('../../setup/config');
+
+
 /*
 @type - POST
 @route - /api/auth/registerUser
@@ -18,11 +22,11 @@ const User=require('../../models/User');
 @access - PUBLIC
 */
 router.post('/registerUser',(req,res)=>{
-const username=req.body.username.trim(),password=req.body.password.trim(),
-domain=req.body.domain;
+const username=req.body.username.toUpperCase().trim(),password=req.body.password.toUpperCase().trim(),
+domain=req.body.domain.toUpperCase();
 User.findOne({username})
     .then(user=>{
-    if(!user)return res.status(200).json({"notRegistered":"User is not registered"});
+    if(user)return res.status(200).json({"alreadyRegistered":"User is already registered"});
     const newUser=new User({username,password,domain});
     bcrypt.genSalt(10,(err, salt)=>{
     bcrypt.hash(newUser.password,salt,(err, hash)=>{
@@ -38,6 +42,41 @@ User.findOne({username})
 });
 
 
+/*
+@type - POST
+@route - /api/auth/loginUser
+@desc - a route to login user
+@access - PUBLIC
+*/
+router.post('/loginUser',(req,res)=>{
+const username=req.body.username.toUpperCase().trim(),password=req.body.password.toUpperCase().trim(),
+domain=req.body.domain.toUpperCase();
+User.findOne({username})
+    .then(user=>{
+    if(!user)return res.status(200).json({"notRegistered":"User is not registered"});
+    bcrypt.compare(password,user.password)
+          .then(isCorrect=>{
+          if(isCorrect){
+          const payload={
+              id:user._id,
+              username:user.username,
+              domain:user.domain
+          };
+          jsonwt.sign(payload,key.secret,{expiresIn:3600},
+          (err,token)=>{
+          if(err)throw err;
+          return res.status(200).json({
+          success:true,
+          token:`Bearer ${token}`
+          });
+          });  
+          }  
+          else return res.status(200).json({"incorrectPassword":"Password is incorrect"});
+          })
+          .catch(err=>console.log(err));
+    })
+    .catch(err=>console.log(err));
+});
 
 
 

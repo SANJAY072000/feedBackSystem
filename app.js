@@ -38,6 +38,10 @@ app.use(cors());
 app.use(passport.initialize());
 
 
+// importing the strategy
+require('./strategies/jsonwtStrategy')(passport);
+
+
 // declaring the port
 const port=process.env.PORT || 3000;
 
