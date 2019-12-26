@@ -1,7 +1,6 @@
 // importing the required modules
 const express=require('express'),
 router=express.Router(),
-mongoose=require('mongoose'),
 bcrypt=require('bcryptjs'),
 jsonwt=require('jsonwebtoken'),
 passport=require('passport');
@@ -140,10 +139,17 @@ router.post('/loginAdmin',(req,res)=>{
               jsonwt.sign(payload,key.secret,{expiresIn:3600},
               (err,token)=>{
               if(err)throw err;
+              else if(admin.name=='MASTER')
               return res.status(200).json({
               success:true,
+              name:'MASTER',
               token:`Bearer ${token}`
               });
+              else return res.status(200).json({
+                success:true,
+                name:'NOTMASTER',
+                token:`Bearer ${token}`
+                });
               });  
               }  
               else return res.status(200).json({"incorrectPassword":"Password is incorrect"});

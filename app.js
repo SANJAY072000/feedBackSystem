@@ -12,7 +12,8 @@ const app=express();
 
 
 // importing the routes
-const auth=require('./routes/api/auth');
+const auth=require('./routes/api/auth'),
+admin=require('./routes/api/admin');
 
 
 // importing the database connection string
@@ -50,6 +51,7 @@ const port=process.env.PORT || 3000;
 
 // configuring the routes
 app.use('/api/auth',auth);
+app.use('/api/admin',admin);
 
 
 // deployment related stuff
