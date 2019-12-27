@@ -86,7 +86,7 @@ Service.findOne({_id:req.params.sid})
 .then(service=>{
 Admin.findOne({_id:service.admid})
      .then(admin=>{
-     Service.find()
+     Service.find({admid:admin._id})
      .then(serv=>{
      if(serv.length==1){
      Admin.findOneAndRemove({_id:service.admid})
@@ -178,7 +178,7 @@ Service.find({admid:req.user._id})
 @desc - a route to get the ratings for a non-master admin
 @access - PRIVATE
 */
-router.get('/',passport.authenticate('jwt',{session:false}),(req,res)=>{
+router.get('/nmService-:sid',passport.authenticate('jwt',{session:false}),(req,res)=>{
     Service.findOne({_id:req.params.sid})
     .then(service=>{
     Quest.find({sevid:req.params.sid})
