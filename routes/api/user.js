@@ -59,35 +59,44 @@ Quest.find({sevid:req.params.sid})
      rate.user=req.user._id;
      rate.rating=req.body.rating[i];
      a.ratings.unshift(rate);
-     a.avgRating=a.trackSum/a.ratings.length;
+     a.avgRating=(a.trackSum/a.ratings.length).toFixed(2);
      a.save()
       .catch(err=>console.log(err));
-     });
-Quest.find({sevid:req.params.sid})
-     .then(quest=>{
-     Service.findOne({_id:req.params.sid})
-            .then(service=>{
-            service.comments.unshift({
-            user:req.user._id,
-            text:req.body.text.toUpperCase()
-            });
-            let sum=0;
-            quest.forEach(a=>{
-            sum+=a.avgRating;
-            });
-            service.avgRating=sum/quest.length;
-            service.save()
-                   .then(service=>res.status(200).json(service))
-                   .catch(err=>console.log(err));
-            })
-            .catch(err=>console.log(err));
+    });
      })
      .catch(err=>console.log(err));
-     })
-     .catch(err=>console.log(err));
-
 });
 
+
+/*
+@type - GET
+@route - /api/user/upService-:sid
+@desc - a route to update service average rating
+@access - PRIVATE
+*/
+router.get('/upService-:sid',passport.authenticate('jwt',{session:false}),
+(req,res)=>{
+    Quest.find({sevid:req.params.sid})
+    .then(quest=>{
+    Service.findOne({_id:req.params.sid})
+           .then(service=>{
+           service.comments.unshift({
+           user:req.user._id,
+           text:req.body.text.toUpperCase()
+           });
+           let sum=0;
+           quest.forEach(a=>{
+           sum+=a.avgRating;
+           });
+           service.avgRating=(sum/quest.length).toFixed(2);
+           service.save()
+                  .then(service=>res.status(200).json(service))
+                  .catch(err=>console.log(err));
+           })
+           .catch(err=>console.log(err));
+    })
+    .catch(err=>console.log(err));
+});
 
 
 

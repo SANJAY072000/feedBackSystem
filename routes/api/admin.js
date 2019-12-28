@@ -153,9 +153,28 @@ new Quest(newQuest).save()
 */
 router.delete('/delQuest-:qid',passport.authenticate('jwt',{session:false}
 ),(req,res)=>{
-Quest.findOneAndRemove({_id:req.params.qid})
-.then(()=>res.status(200).json({"questionRemoved":"Removed Successfully"}))
-.catch(err=>console.log(err));
+Quest.findOne({_id:req.params.qid})
+     .then(question=>{
+     Service.findOne({_id:question.sevid})
+     .then(service=>{
+     Quest.find({sevid:service._id})
+     .then(quest=>{
+     let l=quest.length;
+     service.avgRating=
+    ((Math.ceil(service.avgRating*l)-question.avgRating)/(l-1)).toFixed(2);
+     service.save()
+     .then(service=>{
+     Quest.findOneAndRemove({_id:req.params.qid})
+     .then(()=>res.status(200).json({"questionRemoved":"Removed Successfully"}))
+     .catch(err=>console.log(err));
+     })
+     .catch(err=>console.log(err));  
+     })
+     .catch(err=>console.log(err));
+     })
+     .catch(err=>console.log(err));
+     })
+     .catch(err=>console.log(err));
 });
 
 
