@@ -17,7 +17,7 @@ const serviceSchema=new Schema({
         type:Number,
         default:0
     },
-    comment:[{
+    comments:[{
         user:{
             type:Schema.Types.ObjectId,
             ref:'userst'
@@ -26,7 +26,11 @@ const serviceSchema=new Schema({
             type:String,
             required:true
         }
-    }]
+    }],
+    date:{
+        type:Date,
+        default:Date.now
+    }
 });
 
 

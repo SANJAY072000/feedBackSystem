@@ -13,6 +13,10 @@ const questSchema=new Schema({
         type:String,
         required:true
     },
+    trackSum:{
+        type:Number,
+        default:0
+    },
     avgRating:{
         type:Number,
         default:0
@@ -26,7 +30,11 @@ const questSchema=new Schema({
             type:Number,
             default:0
         }
-    }]
+    }],
+    date:{
+        type:Date,
+        default:Date.now
+    }
 });
 
 

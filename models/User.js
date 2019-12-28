@@ -16,6 +16,10 @@ const userSchema=new Schema({
     domain:{
         type:String,
         required:true
+    },
+    date:{
+        type:Date,
+        default:Date.now
     }
 });
 
