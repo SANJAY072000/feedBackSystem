@@ -36,7 +36,10 @@ passport.authenticate('jwt',{session:false}),
 (req,res)=>{
 Quest.find({sevid:req.params.sid})
      .sort({date:"asc"})
-     .then(quest=>res.status(200).json(quest))
+     .then(quest=>{
+     if(!quest.length)
+     return res.status(200).json({"noQuestions":"No questions found"});
+     return res.status(200).json(quest)})
      .catch(err=>console.log(err));
 });
 

@@ -161,7 +161,7 @@ Quest.findOne({_id:req.params.qid})
      .then(quest=>{
      let l=quest.length;
      service.avgRating=
-    ((Math.ceil(service.avgRating*l)-question.avgRating)/(l-1)).toFixed(2);
+    ((service.avgRating*l)-question.avgRating)/(l-1).toFixed(2);
      service.save()
      .then(service=>{
      Quest.findOneAndRemove({_id:req.params.qid})
